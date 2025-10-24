@@ -1,0 +1,52 @@
+# -----------------------------------------------------------------------------
+# Base stage
+# -----------------------------------------------------------------------------
+
+# Specify an initial image, a specific version of the Node.js image.
+FROM node:20.17.0-bookworm-slim AS base
+
+# Create a working directory in the Docker image. The application will be
+# placed here.
+WORKDIR /usr/src/app
+
+# Copy the package.json and package-lock.json to the app directory. Do this
+# separately from copying the rest of the app's code to leverage Docker's
+# cache. As a result, the Docker image layer with installed dependencies is
+# only rebuilt when these files change.
+COPY package*.json /usr/src/app/
+
+# Install the dependencies needed to run the application in developement mode.
+RUN npm install --ignore-scripts
+
+# -----------------------------------------------------------------------------
+# Final stage
+# -----------------------------------------------------------------------------
+
+# Specifies a base image, a specific version of the Node.js image.
+FROM node:20.17.0-bookworm-slim
+
+# Create the log directory and change the owner of the log directory to the node user.
+RUN true \
+  && mkdir -p /var/log/just-task-it \
+  && chown -R node:node /var/log/just-task-it
+
+# Creates a working directory in the Docker image. The application will be placed here.
+WORKDIR /usr/src/app
+
+# Copy the node_modules from the base stage. (No need to copy the application code becasuse the application code is mounted as a volume.)
+COPY --from=base --chown=node:node /usr/src/app/node_modules /usr/src/app/node_modules
+
+# Sets the user that the Docker container runs as. In this case, it's set to 'node' to avoid running as root for security reasons.
+USER node
+
+# Exposes a port that the application listens on. The actual port number is provided by the EXPRESS_APP_PORT environment variable.
+ARG EXPRESS_APP_PORT=3000
+EXPOSE ${EXPRESS_APP_PORT}
+
+# Set the PORT to 3000 by default.
+ENV PORT=$EXPRESS_APP_PORT
+
+# Defines the command to start the application. In this case, the application is started with nodemon, a utility that monitors for any changes in the source and automatically restarts the server. 
+# The '-e' flag is used to specify the file extensions that nodemon should watch.
+# The '--inspect' flag is used to enable the inspector agent.
+CMD [ "npx", "nodemon", "-e" , "js,json,ejs,html,css", "--inspect", "src/server.js"]

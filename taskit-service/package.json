@@ -1,0 +1,40 @@
+{
+  "name": "example-just-task-it-featuring-logging",
+  "version": "3.2.0",
+  "description": "1DV026 - Example - Just Task It feat. Logging",
+  "type": "module",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=20.6.0"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon --inspect --env-file=.env src/server.js",
+    "lint": "npx eslint ./src || exit 0",
+    "lint:fix": "npx eslint ./src --fix || exit 0",
+    "docker:dev": "docker compose -p 2dv013-jit-dev -f docker-compose.yaml -f docker-compose.development.yaml up --build",
+    "docker:prod": "docker compose -p 2dv013-jit -f docker-compose.yaml -f docker-compose.production.yaml up --build"
+  },
+  "contributors": [
+    "Johan Leitet <johan.leitet@lnu.se>",
+    "Mats Loock <mats.loock@lnu.se>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "@lnu/json-js-cycle": "^2.0.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.0",
+    "express-ejs-layouts": "^2.5.1",
+    "express-http-context": "^1.2.4",
+    "express-session": "^1.18.0",
+    "mongoose": "^8.6.3",
+    "morgan": "^1.10.0",
+    "winston": "^3.14.2",
+    "winston-mongodb": "^5.1.1"
+  },
+  "devDependencies": {
+    "@lnu/eslint-config": "^1.1.10",
+    "nodemon": "^3.1.7"
+  }
+}

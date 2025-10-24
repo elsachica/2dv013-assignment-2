@@ -1,0 +1,38 @@
+# This is a Docker Compose file specifically for development settings.
+# It is intended to be used in conjunction with the base docker-compose.yaml file to override or extend its service definitions and volumes.
+# This file sets additional development-specific configurations, such as the build context, volumes for live code updates, and environment variables.
+# The 'mongodb' service uses a volume to persist data, and the 'just-task-it' service is built from a development-specific Dockerfile.
+# The 'just-task-it' service also mounts a volume for the 'src' directory to allow for live code updates, and sets an environment variable for the log level.
+
+# The 'services' block defines all the services (i.e., containers) that make up the application.
+services:
+  # Defines a service named 'mongodb'.
+  mongodb:
+    # The 'volumes' directive is used to mount paths or named volumes.
+    # Here, it mounts the '.volumes/mongodb' directory on the host to the '/data/db' directory in the container.
+    # This allows the MongoDB data to persist across container restarts.
+    volumes:
+      - ./.volumes/mongodb:/data/db
+
+  # Defines a service named 'just-task-it'.
+  just-task-it:
+    # Specifies that Docker should build the image using the Dockerfile.deveopment file.
+    build:
+      dockerfile: Dockerfile.development
+
+    # The 'volumes' directive is used here to mount the 'src' directory on the host to the '/usr/src/app/src' directory in the container.
+    # This allows for changes made in the 'src' directory on the host to be reflected in the container.
+    # Mount the 'node_modules' directory in the container to avoid conflicts with the host.
+    volumes:
+      - ./:/usr/src/app/
+      - node_modules:/usr/src/app/node_modules
+
+    # The 'env_file' directive is used to specify a file containing environment variables to be set in the container.
+    # Each line in the file should be in the form VAR=VALUE.
+    # In this case, it's set to use the '.env' file in the current directory.
+    env_file:
+      - ./.env
+
+volumes:
+  # Defines a named volume named 'node_modules'.
+  node_modules:

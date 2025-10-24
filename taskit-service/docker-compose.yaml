@@ -1,0 +1,85 @@
+# This Docker Compose file defines the services that make up the 'just-task-it' application.
+# It includes the 'mongodb' service running the mongo:7.0.2 image and the 'just-task-it' service built from the Dockerfile in the current directory.
+# The services are configured to communicate with each other, with 'just-task-it' depending on 'mongodb'.
+# Environment variables are set for the 'just-task-it' service, including database connection details, logging configurations, and session settings.
+# The 'just-task-it' service is also configured to expose its port for external access.
+# Docker Compose uses this file to create, connect, and manage all the services as a single unit, simplifying the process of running multi-container Docker applications.
+
+services:
+  # Defines a service named 'mongodb' that uses the mongo:8.0.0 image.
+  mongodb:
+    image: mongo:8.0.0
+
+  # Defines a service named 'just-task-it'.
+  just-task-it:
+      # Specifies that Docker should build the image using a Dockerfile file in the current directory.
+    build:
+      context: .
+
+    # Specifies the name and tag of the image that Docker should build or pull.
+    image: 2dv013/just-task-it:1.0.0
+
+    # Specifies that the 'just-task-it' service depends on the 'mongodb' service.
+    # This means that Docker will start the 'mongodb' service before the 'just-task-it' service.
+    depends_on:
+      - mongodb
+
+    # Specifies that Docker should restart the 'just-task-it' service if it fails.
+    restart: on-failure
+
+    # The 'environment' directive is used to set environment variables in the Docker container.
+    # These variables can be accessed by the application running inside the container.
+    # Each line under this directive sets a different environment variable.
+    # ---------------------------------------------------------------------------------------------------------
+    # 👉 DOCKER_HOST_PORT and SESSION_SECRET must be set in the host environment before running 'docker compose up'.
+    # ---------------------------------------------------------------------------------------------------------
+    environment:
+      # The base URL for the application. Defaults to '/' if not provided.
+      - BASE_URL=${BASE_URL:-/}
+
+      # The connection string for the MongoDB database. Defaults to 'mongodb://mongodb:27017/just-task-it' if not provided.
+      - DB_CONNECTION_STRING=${DB_CONNECTION_STRING:-mongodb://mongodb:27017/just-task-it}
+
+      # The port that the Express application listens on. Defaults to 3000 if not provided.
+      - PORT=${EXPRESS_APP_PORT:-3000}
+
+      # The name of the session. Defaults to 'just-task-it-feat-logging.user-session' if not provided.
+      - SESSION_NAME=${SESSION_NAME:-just-task-it-feat-logging.user-session}
+
+      # The secret used to sign the session ID cookie. No default value.
+      - SESSION_SECRET=${SESSION_SECRET}
+
+      # The level of logging. Defaults to 'http' if not provided.
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+
+      # Whether to add remote address information to the logs. Defaults to 'true' if not provided.
+      - LOGGER_MORGAN_FORMAT_ADD_REMOTE=${LOGGER_MORGAN_FORMAT_ADD_REMOTE:-true}
+
+      # The file to write combined logs to. Defaults to '/var/log/just-task-it/combined.log' if not provided.
+      - LOGGER_COMBINED_LOG_FILE=${LOGGER_COMBINED_LOG_FILE:-/var/log/just-task-it/combined.log}
+
+      # The file to write error logs to. Defaults to '/var/log/just-task-it/error.log' if not provided.
+      - LOGGER_ERROR_LOG_FILE=${LOGGER_ERROR_LOG_FILE:-/var/log/just-task-it/error.log}
+
+      # The file to write uncaught exception logs to. Defaults to '/var/log/just-task-it/uncaught-exception.log' if not provided.
+      - LOGGER_UNCAUGHT_EXCEPTION_LOG_FILE=${LOGGER_UNCAUGHT_EXCEPTION_LOG_FILE:-/var/log/just-task-it/uncaught-exception.log}
+
+    # ---------------------------------------------------------------------------------------------------------
+    # NOTE! The subsequent environment variables are utilized by the logger for logging to a database.
+    #       If these are not set, the logger will not log to MongoDB. Maybe something to consier for production?
+    #
+
+    # The MongoDB connection string to use for the logger. Defaults to 'mongodb://mongodb:27017/just-task-it-audit'.
+    # - LOGGER_DB_CONNECTION_STRING=${LOGGER_DB_CONNECTION_STRING:-mongodb://mongodb:27017/just-task-it-audit}
+
+    # The name of the collection to use for the logger. Defaults to 'logs'.
+    # - LOGGER_DB_COLLECTION_NAME=${LOGGER_DB_COLLECTION_NAME:-logs}
+
+    #
+    # ---------------------------------------------------------------------------------------------------------
+
+    # The 'ports' directive maps the port inside the Docker container to a port on the host machine.
+    ports:
+      # Maps the DOCKER_HOST_PORT environment variable on the host to the EXPRESS_APP_PORT inside the 'just-task-it' container.
+      # This allows external access to the 'just-task-it' service on the specified host port.
+      - "${DOCKER_HOST_PORT}:${EXPRESS_APP_PORT:-3000}"

@@ -1,0 +1,31 @@
+# This is a Docker Compose file specifically for production settings.
+# It is intended to be used in conjunction with the base docker-compose.yaml file to override or extend its service definitions and volumes.
+# This file sets additional production-specific configurations, such as the build context and environment variables.
+# The 'mongodb' service uses a volume to persist data, and the 'just-task-it' service is built from a specific Dockerfile.
+# Environment variables for the 'just-task-it' service are also set here, with some variables having production-specific values.
+
+# The 'services' block defines all the services (i.e., containers) that make up your application.
+services:
+  # Defines a service named 'mongodb'.
+  mongodb:
+    # Specifies a volume for the 'mongodb' service.
+    # This mounts the '/var/mongodb' directory on the host to the '/data/db' directory in the container.
+    # This allows the MongoDB data to persist across container restarts.
+    volumes:
+      - /var/mongodb:/data/db
+
+  # Defines a service named 'just-task-it'.
+  just-task-it:
+    # Specifies that Docker should build the image using the Dockerfile.production file.
+    build:
+      dockerfile: Dockerfile.production
+
+    # The 'environment' directive is used to set environment variables in the Docker container.
+    # These variables can be accessed by the application running inside the container.
+    # Each line under this directive sets a different environment variable.
+    # ---------------------------------------------------------------------------------------------------------
+    # 👉 DOCKER_PORT and SESSION_SECRET must be set in the host environment before running 'docker compose up'.
+    # ---------------------------------------------------------------------------------------------------------
+    environment:
+      # Sets the environment in which the application is running. In this case, it's set to 'production'.
+      - NODE_ENV=production
