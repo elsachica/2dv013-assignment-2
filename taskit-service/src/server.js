@@ -14,6 +14,7 @@ import { fileURLToPath } from 'node:url'
 import { connectToDatabase } from './config/mongoose.js'
 // TODO: Substitute the current in-memory session store with a persistent session store, such as Redis.
 import { sessionOptions } from './config/sessionOptions.js'
+import './config/rabbitmq.js'
 import { router } from './routes/router.js'
 import { randomUUID } from 'node:crypto'
 import { morganLogger } from './config/morgan.js'

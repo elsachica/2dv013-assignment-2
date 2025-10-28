@@ -1,0 +1,81 @@
+import amqp from 'amqplib'
+
+let connection = null
+let channel = null
+
+/**
+ * Connects to RabbitMQ and creates a channel.
+ */
+async function connect () {
+  try {
+    connection = await amqp.connect(process.env.RABBITMQ_URL || 'amqp://admin:password@rabbitmq:5672')
+
+    channel = await connection.createChannel()
+
+    await channel.assertExchange('tasks', 'topic', { durable: true })
+
+    console.log('RabbitMQ är connected')
+
+    connection.on('error', (err) => {
+      console.error('RabbitMQ connection error', err)
+    })
+
+    connection.on('close', () => {
+      console.log('RabbitMQ connection closed')
+    })
+  } catch (error) {
+    console.error('Failed to connect to RabbitMQ:', error)
+    setTimeout(connect, 5000)
+  }
+}
+
+/**
+ * Publishes an event message to the 'tasks' exchange using the provided routing key.
+ *
+ * @param {string} routingKey - The routing key (topic) to publish the message to.
+ * @param {any} message - The message payload to be sent; it will be JSON-stringified.
+ * @returns {Promise<void>} Resolves when the publish attempt has been made.
+ */
+export async function publishEvent (routingKey, message) {
+  try {
+    if (!channel) {
+      console.error('Rabbit channel not available')
+      return
+    }
+
+    const messageBuffer = Buffer.from(JSON.stringify(message))
+
+    channel.publish('tasks', routingKey, messageBuffer, {
+      persistent: true,
+      contentType: 'application/json'
+    })
+
+    console.log(`Event published: ${routingKey}`, message)
+  } catch (error) {
+    console.error('Failed to publish event:', error)
+  }
+}
+
+/**
+ * Closes the RabbitMq connection
+ */
+export async function close () {
+  try {
+    if (channel) {
+      await channel.close()
+    }
+    if (connection) {
+      await connection.close()
+    }
+    console.log('RabbitMQ connection closed gracefully')
+  } catch (error) {
+    console.error('Error closing RabbitMQ connection:', error)
+  }
+}
+
+await connect()
+
+export default {
+  publishEvent,
+  close
+}
