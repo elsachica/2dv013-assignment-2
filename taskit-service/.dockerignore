@@ -8,3 +8,12 @@
 !package-lock.json
 !package.json
 !_delthis.txt
+
+node_modules
+npm-debug.log
+.env
+.git
+.gitignore
+README.md
+.volumes
+.vscode

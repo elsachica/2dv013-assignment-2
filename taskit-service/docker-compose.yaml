@@ -10,6 +10,13 @@ services:
   mongodb:
     image: mongo:8.0.0
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+  
   # Defines a service named 'just-task-it'.
   just-task-it:
       # Specifies that Docker should build the image using a Dockerfile file in the current directory.
@@ -23,6 +30,7 @@ services:
     # This means that Docker will start the 'mongodb' service before the 'just-task-it' service.
     depends_on:
       - mongodb
+      - redis
 
     # Specifies that Docker should restart the 'just-task-it' service if it fails.
     restart: on-failure
@@ -39,6 +47,8 @@ services:
 
       # The connection string for the MongoDB database. Defaults to 'mongodb://mongodb:27017/just-task-it' if not provided.
       - DB_CONNECTION_STRING=${DB_CONNECTION_STRING:-mongodb://mongodb:27017/just-task-it}
+
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
 
       # The port that the Express application listens on. Defaults to 3000 if not provided.
       - PORT=${EXPRESS_APP_PORT:-3000}
@@ -83,3 +93,6 @@ services:
       # Maps the DOCKER_HOST_PORT environment variable on the host to the EXPRESS_APP_PORT inside the 'just-task-it' container.
       # This allows external access to the 'just-task-it' service on the specified host port.
       - "${DOCKER_HOST_PORT}:${EXPRESS_APP_PORT:-3000}"
+
+volumes:
+  redis-data:

@@ -1,3 +1,6 @@
+import RedisStore from 'connect-redis'
+import redisClient from './redis.js'
+
 /**
  * @file This module contains the options object for the session middleware.
  * @module config/mongoose
@@ -12,6 +15,10 @@ export const sessionOptions = {
   secret: process.env.SESSION_SECRET, // Change it!!! The secret is used to hash the session with HMAC.
   resave: false, // Resave even if a request is not changing the session.
   saveUninitialized: false, // Don't save a created but not modified session.
+  store: new RedisStore({
+    client: redisClient,
+    prefix: 'session:'
+  }),
   cookie: {
     maxAge: 1000 * 60 * 60 * 24, // 1 day
     sameSite: 'strict'
