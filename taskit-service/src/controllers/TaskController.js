@@ -7,6 +7,7 @@
 
 import { logger } from '../config/winston.js'
 import { TaskModel } from '../models/TaskModel.js'
+import { publishEvent } from '../config/rabbitmq.js'
 
 /**
  * Encapsulates a controller.
@@ -92,12 +93,19 @@ export class TaskController {
 
       const { description, done } = req.body
 
-      await TaskModel.create({
+      const task = await TaskModel.create({
         description,
         done: done === 'on'
       })
 
       logger.silly('Created new task document')
+
+      await publishEvent('task.created', {
+        id: task._id.toString(),
+        description: task.description,
+        done: task.done,
+        createdAt: task.createdAt
+      })
 
       req.session.flash = { type: 'success', text: 'The task was created successfully.' }
       res.redirect('.')
@@ -136,6 +144,14 @@ export class TaskController {
       if (req.doc.isModified()) {
         await req.doc.save()
         logger.silly('Updated task document', { id: req.doc.id })
+
+        await publishEvent('task.updated', {
+          id: req.doc._id.toString(),
+          description: req.doc.description,
+          done: req.doc.done,
+          updatedAt: req.doc.updatedAt
+        })
+
         req.session.flash = { type: 'success', text: 'The task was updated successfully.' }
       } else {
         logger.silly('Unnecessary to update task document', { id: req.doc.id })
@@ -171,9 +187,18 @@ export class TaskController {
     try {
       logger.silly('Deleting task document', { id: req.doc.id })
 
+      const taskId = req.doc._id.toString()
+      const taskDescription = req.doc.description
+
       await req.doc.deleteOne()
 
       logger.silly('Deleted task document', { id: req.doc.id })
+
+      await publishEvent('task.deleted', {
+        id: taskId,
+        description: taskDescription,
+        deletedAt: new Date()
+      })
 
       req.session.flash = { type: 'success', text: 'The task was deleted successfully.' }
       res.redirect('..')

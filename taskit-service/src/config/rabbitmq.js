@@ -1,4 +1,5 @@
 import amqp from 'amqplib'
+import { logger } from './winston.js'
 
 let connection = null
 let channel = null
@@ -14,17 +15,17 @@ async function connect () {
 
     await channel.assertExchange('tasks', 'topic', { durable: true })
 
-    console.log('RabbitMQ är connected')
+    logger.info('RabbitMQ is connected')
 
     connection.on('error', (err) => {
-      console.error('RabbitMQ connection error', err)
+      logger.error('RabbitMQ connection error', err)
     })
 
     connection.on('close', () => {
-      console.log('RabbitMQ connection closed')
+      logger.info('RabbitMQ connection closed')
     })
   } catch (error) {
-    console.error('Failed to connect to RabbitMQ:', error)
+    logger.error('Failed to connect to RabbitMQ:', error)
     setTimeout(connect, 5000)
   }
 }
@@ -39,7 +40,7 @@ async function connect () {
 export async function publishEvent (routingKey, message) {
   try {
     if (!channel) {
-      console.error('Rabbit channel not available')
+      logger.error('Rabbit channel not available')
       return
     }
 
@@ -50,14 +51,16 @@ export async function publishEvent (routingKey, message) {
       contentType: 'application/json'
     })
 
-    console.log(`Event published: ${routingKey}`, message)
+    logger.info(`Event published: ${routingKey}`, message)
   } catch (error) {
-    console.error('Failed to publish event:', error)
+    logger.error('Failed to publish event:', error)
   }
 }
 
 /**
- * Closes the RabbitMq connection
+ * Closes the RabbitMQ connection.
+ *
+ * @returns {Promise<void>} Resolves when the connection and channel are closed.
  */
 export async function close () {
   try {
@@ -67,9 +70,9 @@ export async function close () {
     if (connection) {
       await connection.close()
     }
-    console.log('RabbitMQ connection closed gracefully')
+    logger.info('RabbitMQ connection closed gracefully')
   } catch (error) {
-    console.error('Error closing RabbitMQ connection:', error)
+    logger.error('Error closing RabbitMQ connection:', error)
   }
 }
 
