@@ -92,6 +92,19 @@ build/Release
 node_modules/
 jspm_packages/
 
+# Ignore node_modules, dist, and .env in all microservices
+/taskit-service/node_modules/
+/taskit-service/dist/
+/taskit-service/.env
+/analytics-service/node_modules/
+/analytics-service/dist/
+/analytics-service/.env
+
+# Ignore project guide and placeholder files
+please_complete.md
+ASSIGNMENT2-GUIDE.md
+
+
 # TypeScript v1 declaration files
 typings/
 
@@ -123,6 +136,7 @@ typings/
 .env
 .env.test
 .env*.local
+
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache

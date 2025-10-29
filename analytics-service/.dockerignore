@@ -1,0 +1,19 @@
+# Exclude all files and directories!
+*
+
+# Explicitly include
+!public
+!src
+!nodemon.json
+!package-lock.json
+!package.json
+!_delthis.txt
+
+node_modules
+npm-debug.log
+.env
+.git
+.gitignore
+README.md
+.volumes
+.vscode
