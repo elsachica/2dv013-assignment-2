@@ -42,10 +42,10 @@ export async function saveMetric (metricData) {  // ← ÄNDRA HÄR!
 export async function getTasksCompletedOverTime () {
   return await db.collection('metrics')
     .aggregate([
-      { $match: { event_type: 'task.updated', done: true } },  // ← FIXA: kolla done=true
+      { $match: { event_type: 'task.updated', done: true, timestamp: { $type: "date" } } }, // säkerställ att timestamp är date
       {
         $group: {
-          _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+          _id: { $dateToString: { format: '%Y-%m-%d', date: '$timestamp' } },
           count: { $sum: 1 }
         }
       },

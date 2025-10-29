@@ -1,0 +1,134 @@
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      color: white;
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 2.5rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+    
+    .stat-card h2 {
+      color: #667eea;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .stat-card .number {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #333;
+    }
+    
+    .stat-card.created .number { color: #10b981; }
+    .stat-card.updated .number { color: #f59e0b; }
+    .stat-card.deleted .number { color: #ef4444; }
+    
+    .chart-container {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .chart-container h2 {
+      color: #667eea;
+      margin-bottom: 1rem;
+    }
+    
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .timeline-item {
+      display: flex;
+      align-items: center;
+      padding: 0.5rem;
+      background: #f3f4f6;
+      border-radius: 8px;
+    }
+    
+    .timeline-date {
+      flex: 0 0 120px;
+      font-weight: 600;
+      color: #667eea;
+    }
+    
+    .timeline-bar {
+      flex: 1;
+      height: 30px;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      padding: 0 1rem;
+      color: white;
+      font-weight: bold;
+    }
+    
+    .refresh-btn {
+      display: block;
+      margin: 2rem auto 0;
+      padding: 1rem 2rem;
+      background: white;
+      color: #667eea;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .refresh-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #6b7280;
+    }

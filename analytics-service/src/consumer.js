@@ -27,10 +27,13 @@ export async function startConsumer () {
           console.log('📥 Received event:', eventData)
 
           // Lägg till event_type från routing key
-          await saveMetric({
-            event_type: routingKey,  // ← LÄGG TILL!
-            ...eventData
-          })
+            // ...existing code...
+            await saveMetric({
+            event_type: routingKey,
+            ...eventData,
+            timestamp: new Date(eventData.updatedAt || eventData.createdAt || Date.now())
+            })
+            // ...existing code...
 
           channel.ack(msg)
         } catch (error) {

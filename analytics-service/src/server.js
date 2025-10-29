@@ -1,14 +1,13 @@
 import express from 'express'
-import { connectDatabase, getTaskCounts, getTasksCompletedOverTime } from './database.js'  // ← Fixa stavfelet!
+import { connectDatabase, getTaskCounts, getTasksCompletedOverTime } from './database.js'
 import { startConsumer } from './consumer.js'
 
 const app = express()
 const PORT = process.env.PORT || 4000
 
-// Set up EJS
 app.set('view engine', 'ejs')
 app.set('views', './src/views')
-
+app.use(express.static('./src/public'))
 /**
  * Dashboard route - displays analytics.
  */
