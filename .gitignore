@@ -210,4 +210,16 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# --- Terraform ---
+terraform/.terraform/
+terraform/terraform.tfstate
+terraform/terraform.tfstate.*
+terraform/.terraform.lock.hcl
+terraform/*.tfplan
+terraform/crash.log
+
+# --- Ansible ---
+ansible/inventory.ini
+ansible/*.retry
+
 # End of https://www.toptal.com/developers/gitignore/api/node,linux,macos,windows,visualstudiocode

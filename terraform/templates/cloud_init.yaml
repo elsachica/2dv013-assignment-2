@@ -1,0 +1,18 @@
+#cloud-config
+package_update: true
+package_upgrade: false
+
+packages:
+  - python3
+  - python3-pip
+
+# Minimal setup - let Ansible handle everything else
+runcmd:
+  # Install Ansible
+  - python3 -m pip install --user ansible --break-system-packages
+
+  # Set up sudo access for ubuntu user
+  - usermod -aG sudo ubuntu
+  - echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/k3s-ubuntu
+
+final_message: "🎉 VM ready!"
