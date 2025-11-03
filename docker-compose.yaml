@@ -42,7 +42,7 @@ services:
   just-task-it:
     build:
       context: ./taskit-service
-    image: 2dv013/just-task-it:1.0.0
+    image: pannkakor/taskit-backend:1.0.0
     depends_on:
       mongodb:
         condition: service_healthy
@@ -70,7 +70,7 @@ services:
   analytics:
     build:
       context: ./analytics-service
-    image: 2dv013/jti-analytics:1.0.0
+    image: pannkakor/taskit-analytics:1.0.0
     depends_on:
       mongodb:
         condition: service_healthy

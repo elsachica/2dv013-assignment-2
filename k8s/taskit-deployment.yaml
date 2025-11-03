@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taskit
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: taskit
+  template:
+    metadata:
+      labels:
+        app: taskit
+    spec:
+      containers:
+        - name: taskit
+          image: pannkakor/taskit-backend:1.0.0
+          ports:
+            - containerPort: 3000
+          env:
+            - name: BASE_URL
+              value: "/"
+            - name: DB_CONNECTION_STRING
+              value: "mongodb://mongodb:27017/just-task-it"
+            - name: REDIS_URL
+              value: "redis://redis:6379"
+            - name: RABBITMQ_URL
+              value: "amqp://admin:password@rabbitmq:5672"
+            - name: PORT
+              value: "3000"
+            - name: SESSION_NAME
+              value: "just-task-it-feat-logging.user-session"
+            - name: SESSION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: taskit-session-secret
+                  key: SESSION_SECRET
+            - name: LOG_LEVEL
+              value: "info"
+            - name: LOGGER_MORGAN_FORMAT_ADD_REMOTE
+              value: "true"
+            - name: LOGGER_COMBINED_LOG_FILE
+              value: "/var/log/just-task-it/combined.log"
+            - name: LOGGER_ERROR_LOG_FILE
+              value: "/var/log/just-task-it/error.log"
+            - name: LOGGER_UNCAUGHT_EXCEPTION_LOG_FILE
+              value: "/var/log/just-task-it/uncaught-exception.log"
+          volumeMounts:
+            - name: log-volume
+              mountPath: /var/log/just-task-it
+      volumes:
+        - name: log-volume
+          emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: taskit
+spec:
+  selector:
+    app: taskit
+  ports:
+    - port: 3000
+      targetPort: 3000
+  type: NodePort
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: taskit-session-secret
+type: Opaque
+stringData:
+  SESSION_SECRET: "change-this-to-a-secure-value"
