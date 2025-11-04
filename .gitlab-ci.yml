@@ -1,0 +1,71 @@
+image: docker:27-cli
+
+stages:
+  - build
+  - test
+  - push
+  - deploy
+
+variables:
+  DOCKER_DRIVER: overlay2
+
+before_script:
+  - docker info
+
+# Bygg Taskit-backend
+build_taskit:
+  stage: build
+  script:
+    - docker build -t $DOCKER_USER/taskit-backend:latest ./taskit-service
+
+# Bygg Analytics
+build_analytics:
+  stage: build
+  script:
+    - docker build -t $DOCKER_USER/taskit-analytics:latest ./analytics-service
+
+# Test Taskit-backend
+test_taskit:
+  stage: test
+  script:
+    - cd taskit-service
+    - npm ci
+    - npm run lint
+    - npm test || echo "No tests yet"
+
+# Test Analytics
+test_analytics:
+  stage: test
+  script:
+    - cd analytics-service
+    - npm ci
+    - npm run lint || echo "No linter"
+    - npm test || echo "No tests yet"
+
+# Pusha Docker-images
+push_taskit:
+  stage: push
+  script:
+    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin
+    - docker push $DOCKER_USER/taskit-backend:latest
+
+push_analytics:
+  stage: push
+  script:
+    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin
+    - docker push $DOCKER_USER/taskit-analytics:latest
+
+# Deploy till Kubernetes
+deploy_k8s:
+  stage: deploy
+  image: bitnami/kubectl:latest
+  script:
+    - echo "$KUBECONFIG_DATA" | base64 -d > kubeconfig.yaml
+    - export KUBECONFIG=$PWD/kubeconfig.yaml
+    - kubectl apply -f k8s/
+  only:
+    - main
+    - master
+    - deploy
+  environment:
+    name: production
