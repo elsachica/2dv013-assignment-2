@@ -1,36 +1,36 @@
-image: docker:27-cli
-
-services:
-  - docker:27-dind
+# Bygger och pushar images med Buildah (fungerar på GitLab Shared Runners) och deployar till Kubernetes
 
 stages:
   - build
   - test
-  - push
   - deploy
 
 variables:
-  DOCKER_DRIVER: overlay2
-  DOCKER_HOST: tcp://docker:2375
+  IMAGE_BACKEND: docker.io/$DOCKER_USER/taskit-backend:latest
+  IMAGE_ANALYTICS: docker.io/$DOCKER_USER/taskit-analytics:latest
 
-before_script:
-  - docker info
-
-# Bygg Taskit-backend
+# Bygg Taskit-backend med Buildah
 build_taskit:
   stage: build
+  image: quay.io/buildah/stable:latest
   script:
-    - docker build -t $DOCKER_USER/taskit-backend:latest ./taskit-service
+    - buildah bud -t $IMAGE_BACKEND ./taskit-service
+    - echo $DOCKER_PASSWORD | buildah login -u $DOCKER_USER --password-stdin docker.io
+    - buildah push $IMAGE_BACKEND
 
-# Bygg Analytics
+# Bygg Analytics med Buildah
 build_analytics:
   stage: build
+  image: quay.io/buildah/stable:latest
   script:
-    - docker build -t $DOCKER_USER/taskit-analytics:latest ./analytics-service
+    - buildah bud -t $IMAGE_ANALYTICS ./analytics-service
+    - echo $DOCKER_PASSWORD | buildah login -u $DOCKER_USER --password-stdin docker.io
+    - buildah push $IMAGE_ANALYTICS
 
 # Test Taskit-backend
 test_taskit:
   stage: test
+  image: node:20
   script:
     - cd taskit-service
     - npm ci
@@ -40,24 +40,12 @@ test_taskit:
 # Test Analytics
 test_analytics:
   stage: test
+  image: node:20
   script:
     - cd analytics-service
     - npm ci
     - npm run lint || echo "No linter"
     - npm test || echo "No tests yet"
-
-# Pusha Docker-images
-push_taskit:
-  stage: push
-  script:
-    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin
-    - docker push $DOCKER_USER/taskit-backend:latest
-
-push_analytics:
-  stage: push
-  script:
-    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin
-    - docker push $DOCKER_USER/taskit-analytics:latest
 
 # Deploy till Kubernetes
 deploy_k8s:
@@ -70,6 +58,5 @@ deploy_k8s:
   only:
     - main
     - master
-    - deploy
   environment:
     name: production
