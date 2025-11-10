@@ -41,7 +41,7 @@ test_analytics:
 
 deploy_k8s:
   stage: deploy
-  image: lachlanevenson/k8s-kubectl:latest
+  image: bitnami/kubectl:latest
   script:
     - echo "$KUBECONFIG_DATA" | base64 -d > kubeconfig.yaml
     - export KUBECONFIG=$PWD/kubeconfig.yaml
