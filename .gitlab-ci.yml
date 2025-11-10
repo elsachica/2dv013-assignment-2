@@ -8,23 +8,22 @@ stages:
 
 variables:
   DOCKER_DRIVER: overlay2
+  IMAGE_TAG_TASKIT: $DOCKER_USER/taskit-backend:$CI_COMMIT_REF_SLUG
+  IMAGE_TAG_ANALYTICS: $DOCKER_USER/taskit-analytics:$CI_COMMIT_REF_SLUG
 
 before_script:
-  - docker info
+  - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin
 
-# Bygg Taskit-backend
 build_taskit:
   stage: build
   script:
-    - docker build -t $DOCKER_USER/taskit-backend:latest -f ./taskit-service/Dockerfile ./taskit-service
+    - docker build --pull -t $IMAGE_TAG_TASKIT -f ./taskit-service/Dockerfile ./taskit-service
 
-# Bygg Analytics
 build_analytics:
   stage: build
   script:
-    - docker build -t $DOCKER_USER/taskit-analytics:latest ./analytics-service
+    - docker build --pull -t $IMAGE_TAG_ANALYTICS ./analytics-service
 
-# Test Taskit-backend
 test_taskit:
   stage: test
   script:
@@ -33,7 +32,6 @@ test_taskit:
     - npm run lint
     - npm test || echo "No tests yet"
 
-# Test Analytics
 test_analytics:
   stage: test
   script:
@@ -42,20 +40,16 @@ test_analytics:
     - npm run lint || echo "No linter"
     - npm test || echo "No tests yet"
 
-# Pusha Docker-images
 push_taskit:
   stage: push
   script:
-    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin
-    - docker push $DOCKER_USER/taskit-backend:latest
+    - docker push $IMAGE_TAG_TASKIT
 
 push_analytics:
   stage: push
   script:
-    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin
-    - docker push $DOCKER_USER/taskit-analytics:latest
+    - docker push $IMAGE_TAG_ANALYTICS
 
-# Deploy till Kubernetes
 deploy_k8s:
   stage: deploy
   image: bitnami/kubectl:latest
