@@ -3,14 +3,22 @@ stages:
   - test
   - deploy
 
+# -------------------------------
+# Build & push Docker images with Kaniko
+# -------------------------------
 build_taskit:
   stage: build
   image:
     name: gcr.io/kaniko-project/executor:v1.9.0-debug
     entrypoint: [""]
   script:
+    # Auth for GitLab Container Registry using CI_JOB_TOKEN
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(printf '%s' "gitlab-ci-token:${CI_JOB_TOKEN}" | base64)\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context "${CI_PROJECT_DIR}/taskit-service" --dockerfile "${CI_PROJECT_DIR}/taskit-service/Dockerfile" --destination "${CI_REGISTRY_IMAGE}/taskit-backend:${CI_COMMIT_REF_SLUG}"
+    # Build Taskit backend
+    - /kaniko/executor --context "${CI_PROJECT_DIR}/taskit-service" \
+                       --dockerfile "${CI_PROJECT_DIR}/taskit-service/Dockerfile" \
+                       --destination "${CI_REGISTRY_IMAGE}/taskit-backend:${CI_COMMIT_REF_SLUG}" \
+                       --snapshotMode=redo
 
 build_analytics:
   stage: build
@@ -19,8 +27,15 @@ build_analytics:
     entrypoint: [""]
   script:
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(printf '%s' "gitlab-ci-token:${CI_JOB_TOKEN}" | base64)\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context "${CI_PROJECT_DIR}/analytics-service" --dockerfile "${CI_PROJECT_DIR}/analytics-service/Dockerfile" --destination "${CI_REGISTRY_IMAGE}/taskit-analytics:${CI_COMMIT_REF_SLUG}"
+    # Build Analytics service
+    - /kaniko/executor --context "${CI_PROJECT_DIR}/analytics-service" \
+                       --dockerfile "${CI_PROJECT_DIR}/analytics-service/Dockerfile" \
+                       --destination "${CI_REGISTRY_IMAGE}/taskit-analytics:${CI_COMMIT_REF_SLUG}" \
+                       --snapshotMode=redo
 
+# -------------------------------
+# Test Node.js services
+# -------------------------------
 test_taskit:
   stage: test
   image: node:20
@@ -39,13 +54,18 @@ test_analytics:
     - npm run lint || echo "No linter"
     - npm test || echo "No tests yet"
 
+# -------------------------------
+# Deploy to Kubernetes
+# -------------------------------
 deploy_k8s:
   stage: deploy
-  image: bitnami/kubectl:latest
+  image: lachlanevenson/k8s-kubectl:latest   # Image with bash + kubectl
   script:
     - echo "$KUBECONFIG_DATA" | base64 -d > kubeconfig.yaml
     - export KUBECONFIG=$PWD/kubeconfig.yaml
     - kubectl apply -f k8s/
+    - kubectl rollout status deployment/taskit-backend || true
+    - kubectl rollout status deployment/taskit-analytics || true
   only:
     - main
     - master
