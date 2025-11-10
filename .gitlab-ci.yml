@@ -1,36 +1,29 @@
-image: docker:27-cli
-
-services:
-  - docker:27-dind
-
 stages:
   - build
   - test
-  - push
   - deploy
-
-variables:
-  DOCKER_DRIVER: overlay2
-  DOCKER_TLS_CERTDIR: ""
-  DOCKER_HOST: tcp://docker:2375
-  IMAGE_TAG_TASKIT: $DOCKER_USER/taskit-backend:$CI_COMMIT_REF_SLUG
-  IMAGE_TAG_ANALYTICS: $DOCKER_USER/taskit-analytics:$CI_COMMIT_REF_SLUG
-
-before_script:
-  - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin
 
 build_taskit:
   stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:v1.9.0-debug
+    entrypoint: [""]
   script:
-    - docker build --pull -t $IMAGE_TAG_TASKIT ./taskit-service
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(printf '%s' "gitlab-ci-token:${CI_JOB_TOKEN}" | base64)\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context "${CI_PROJECT_DIR}/taskit-service" --dockerfile "${CI_PROJECT_DIR}/taskit-service/Dockerfile" --destination "${CI_REGISTRY_IMAGE}/taskit-backend:${CI_COMMIT_REF_SLUG}"
 
 build_analytics:
   stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:v1.9.0-debug
+    entrypoint: [""]
   script:
-    - docker build --pull -t $IMAGE_TAG_ANALYTICS ./analytics-service
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(printf '%s' "gitlab-ci-token:${CI_JOB_TOKEN}" | base64)\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context "${CI_PROJECT_DIR}/analytics-service" --dockerfile "${CI_PROJECT_DIR}/analytics-service/Dockerfile" --destination "${CI_REGISTRY_IMAGE}/taskit-analytics:${CI_COMMIT_REF_SLUG}"
 
 test_taskit:
   stage: test
+  image: node:20
   script:
     - cd taskit-service
     - npm ci
@@ -39,21 +32,12 @@ test_taskit:
 
 test_analytics:
   stage: test
+  image: node:20
   script:
     - cd analytics-service
     - npm ci
     - npm run lint || echo "No linter"
     - npm test || echo "No tests yet"
-
-push_taskit:
-  stage: push
-  script:
-    - docker push $IMAGE_TAG_TASKIT
-
-push_analytics:
-  stage: push
-  script:
-    - docker push $IMAGE_TAG_ANALYTICS
 
 deploy_k8s:
   stage: deploy
@@ -67,3 +51,4 @@ deploy_k8s:
     - master
     - deploy
   environment:
+    name: production
