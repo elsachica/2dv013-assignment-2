@@ -1,5 +1,8 @@
 image: docker:27-cli
 
+services:
+  - docker:27-dind
+
 stages:
   - build
   - test
@@ -8,6 +11,8 @@ stages:
 
 variables:
   DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_HOST: tcp://docker:2375
   IMAGE_TAG_TASKIT: $DOCKER_USER/taskit-backend:$CI_COMMIT_REF_SLUG
   IMAGE_TAG_ANALYTICS: $DOCKER_USER/taskit-analytics:$CI_COMMIT_REF_SLUG
 
@@ -17,13 +22,11 @@ before_script:
 build_taskit:
   stage: build
   script:
-    - unset DOCKER_HOST
     - docker build --pull -t $IMAGE_TAG_TASKIT ./taskit-service
 
 build_analytics:
   stage: build
   script:
-    - unset DOCKER_HOST
     - docker build --pull -t $IMAGE_TAG_ANALYTICS ./analytics-service
 
 test_taskit:
@@ -64,4 +67,3 @@ deploy_k8s:
     - master
     - deploy
   environment:
-    name: production
