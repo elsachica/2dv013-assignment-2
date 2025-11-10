@@ -1,8 +1,5 @@
 image: docker:27-cli
 
-services:
-  - docker:27-dind
-
 stages:
   - build
   - test
@@ -19,7 +16,7 @@ before_script:
 build_taskit:
   stage: build
   script:
-    - docker build -t $DOCKER_USER/taskit-backend:latest ./taskit-service
+    - docker build -t $DOCKER_USER/taskit-backend:latest -f ./taskit-service/Dockerfile ./taskit-service
 
 # Bygg Analytics
 build_analytics:
