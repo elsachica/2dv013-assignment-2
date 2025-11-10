@@ -48,7 +48,7 @@ deploy_k8s:
     - echo "$KUBECONFIG_DATA" | base64 -d > kubeconfig.yaml
     - export KUBECONFIG=$PWD/kubeconfig.yaml
     - kubectl apply -f k8s/
-    - kubectl rollout status deployment/taskit-backend || true
+    - kubectl rollout status deployment/taskit || true
     - kubectl rollout status deployment/taskit-analytics || true
   only:
     - main
