@@ -1,36 +1,32 @@
-# Bygger och pushar images med Buildah (fungerar på GitLab Shared Runners) och deployar till Kubernetes
+image: docker:27-cli
 
 stages:
   - build
   - test
+  - push
   - deploy
 
 variables:
-  IMAGE_BACKEND: docker.io/$DOCKER_USER/taskit-backend:latest
-  IMAGE_ANALYTICS: docker.io/$DOCKER_USER/taskit-analytics:latest
+  DOCKER_DRIVER: overlay2
 
-# Bygg Taskit-backend med Buildah
+before_script:
+  - docker info
+
+# Bygg Taskit-backend
 build_taskit:
   stage: build
-  image: quay.io/buildah/stable:latest
   script:
-    - buildah bud -t $IMAGE_BACKEND ./taskit-service
-    - echo $DOCKER_PASSWORD | buildah login -u $DOCKER_USER --password-stdin docker.io
-    - buildah push $IMAGE_BACKEND
+    - docker build -t $DOCKER_USER/taskit-backend:latest ./taskit-service
 
-# Bygg Analytics med Buildah
+# Bygg Analytics
 build_analytics:
   stage: build
-  image: quay.io/buildah/stable:latest
   script:
-    - buildah bud -t $IMAGE_ANALYTICS ./analytics-service
-    - echo $DOCKER_PASSWORD | buildah login -u $DOCKER_USER --password-stdin docker.io
-    - buildah push $IMAGE_ANALYTICS
+    - docker build -t $DOCKER_USER/taskit-analytics:latest ./analytics-service
 
 # Test Taskit-backend
 test_taskit:
   stage: test
-  image: node:20
   script:
     - cd taskit-service
     - npm ci
@@ -40,12 +36,24 @@ test_taskit:
 # Test Analytics
 test_analytics:
   stage: test
-  image: node:20
   script:
     - cd analytics-service
     - npm ci
     - npm run lint || echo "No linter"
     - npm test || echo "No tests yet"
+
+# Pusha Docker-images
+push_taskit:
+  stage: push
+  script:
+    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin
+    - docker push $DOCKER_USER/taskit-backend:latest
+
+push_analytics:
+  stage: push
+  script:
+    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin
+    - docker push $DOCKER_USER/taskit-analytics:latest
 
 # Deploy till Kubernetes
 deploy_k8s:
@@ -58,5 +66,6 @@ deploy_k8s:
   only:
     - main
     - master
+    - deploy
   environment:
     name: production
