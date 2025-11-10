@@ -49,7 +49,7 @@ deploy_k8s:
     - export KUBECONFIG=$PWD/kubeconfig.yaml
     - kubectl apply -f k8s/
     - kubectl rollout status deployment/taskit || true
-    - kubectl rollout status deployment/taskit-analytics || true
+    - kubectl rollout status deployment/analytics || true
   only:
     - main
     - master
