@@ -17,11 +17,13 @@ before_script:
 build_taskit:
   stage: build
   script:
-    - docker build --pull -t $IMAGE_TAG_TASKIT -f ./taskit-service/Dockerfile ./taskit-service
+    - unset DOCKER_HOST
+    - docker build --pull -t $IMAGE_TAG_TASKIT ./taskit-service
 
 build_analytics:
   stage: build
   script:
+    - unset DOCKER_HOST
     - docker build --pull -t $IMAGE_TAG_ANALYTICS ./analytics-service
 
 test_taskit:
