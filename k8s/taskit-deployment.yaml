@@ -72,4 +72,4 @@ metadata:
   name: taskit-session-secret
 type: Opaque
 stringData:
-  SESSION_SECRET: "change-this-to-a-secure-value"
+  SESSION_SECRET: "this-is-a-very-secure-session-secret-change"

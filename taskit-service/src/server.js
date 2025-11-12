@@ -1,18 +1,17 @@
 /**
  * @file Defines the main application.
  * @module src/server
- * @author Mats Loock
+ * @author Elsa
  * @version 3.1.0
  */
 
-import httpContext from 'express-http-context' // Must be first!
+import httpContext from 'express-http-context'
 import express from 'express'
 import expressLayouts from 'express-ejs-layouts'
 import session from 'express-session'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { connectToDatabase } from './config/mongoose.js'
-// TODO: Substitute the current in-memory session store with a persistent session store, such as Redis.
 import { sessionOptions } from './config/sessionOptions.js'
 import './config/rabbitmq.js'
 import { router } from './routes/router.js'

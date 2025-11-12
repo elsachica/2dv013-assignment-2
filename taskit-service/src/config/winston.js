@@ -216,23 +216,23 @@ if (process.env.LOGGER_UNCAUGHT_EXCEPTION_LOG_FILE) {
   )
 }
 
-// Add MongoDB transport if a connection string is provided.
-if (process.env.LOGGER_DB_CONNECTION_STRING) {
-  await import('winston-mongodb')
+// // Add MongoDB transport if a connection string is provided.
+// if (process.env.LOGGER_DB_CONNECTION_STRING) {
+//   await import('winston-mongodb')
 
-  logger.add(new transports.MongoDB({
-    level: 'warn',
-    db: process.env.LOGGER_DB_CONNECTION_STRING,
-    options: {
-      poolSize: 2,
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    },
-    collection: process.env.LOGGER_DB_COLLECTION_NAME || 'logs',
-    capped: true,
-    decolorize: true,
-    format: combine(
-      baseFormat
-    )
-  }))
-}
+//   logger.add(new transports.MongoDB({
+//     level: 'warn',
+//     db: process.env.LOGGER_DB_CONNECTION_STRING,
+//     options: {
+//       poolSize: 2,
+//       useNewUrlParser: true,
+//       useUnifiedTopology: true
+//     },
+//     collection: process.env.LOGGER_DB_COLLECTION_NAME || 'logs',
+//     capped: true,
+//     decolorize: true,
+//     format: combine(
+//       baseFormat
+//     )
+//   }))
+// }
