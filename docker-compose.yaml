@@ -42,7 +42,7 @@ services:
   just-task-it:
     build:
       context: ./taskit-service
-    image: pannkakor/taskit-backend:1.0.0
+    image: registry.gitlab.lnu.se/eg223ps/assignment-2-2dv013/taskit-backend:1.0.0
     depends_on:
       mongodb:
         condition: service_healthy
@@ -70,7 +70,7 @@ services:
   analytics:
     build:
       context: ./analytics-service
-    image: pannkakor/taskit-analytics:1.0.0
+    image: registry.gitlab.lnu.se/eg223ps/assignment-2-2dv013/taskit-analytics:1.0.0
     depends_on:
       mongodb:
         condition: service_healthy

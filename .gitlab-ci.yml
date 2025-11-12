@@ -9,7 +9,7 @@ build_taskit:
     name: gcr.io/kaniko-project/executor:v1.9.0-debug
     entrypoint: [""]
   script:
-    - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"username\":\"$DOCKER_USERNAME\",\"password\":\"$DOCKER_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(printf '%s' "gitlab-ci-token:${CI_JOB_TOKEN}" | base64)\"}}}" > /kaniko/.docker/config.json
     - /kaniko/executor --context "${CI_PROJECT_DIR}/taskit-service" --dockerfile "${CI_PROJECT_DIR}/taskit-service/Dockerfile" --destination "${CI_REGISTRY_IMAGE}/taskit-backend:${CI_COMMIT_REF_SLUG}"
 
 build_analytics:
@@ -18,7 +18,7 @@ build_analytics:
     name: gcr.io/kaniko-project/executor:v1.9.0-debug
     entrypoint: [""]
   script:
-    - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"username\":\"$DOCKER_USERNAME\",\"password\":\"$DOCKER_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(printf '%s' "gitlab-ci-token:${CI_JOB_TOKEN}" | base64)\"}}}" > /kaniko/.docker/config.json
     - /kaniko/executor --context "${CI_PROJECT_DIR}/analytics-service" --dockerfile "${CI_PROJECT_DIR}/analytics-service/Dockerfile" --destination "${CI_REGISTRY_IMAGE}/taskit-analytics:${CI_COMMIT_REF_SLUG}"
 
 test_taskit:

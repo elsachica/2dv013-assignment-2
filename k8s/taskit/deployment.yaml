@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: taskit
-          image: pannkakor/taskit-backend:1.0.0
+          image: registry.gitlab.lnu.se/eg223ps/assignment-2-2dv013/taskit-backend:1.0.0
           ports:
             - containerPort: 3000
           envFrom:
