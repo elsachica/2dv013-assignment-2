@@ -108,7 +108,8 @@ till din publika server-IP (hittas i `ansible/inventory.ini`), t.ex: server http
 ```yaml
 server: https://<SERVER_PUBLIC_IP>:6443
 ```
-### Hämta och base64-koda kubeconfig-filen för GitLab CI/CD
+
+**Hämta och base64-koda kubeconfig-filen för GitLab CI/CD**
 
 Om du vill använda din kubeconfig (`k3s.yaml`) som en variabel i GitLab CI/CD, gör så här på Mac:
 
