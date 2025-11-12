@@ -65,6 +65,16 @@ cd ..
 
 > Om det inte fungerar:  
 > Ta bort manuellt `ansible/inventory.ini` och kör `bash generate-inventory.sh` igen.
+>
+> **Fler felsökningstips:**
+>
+> - Testa att ansluta manuellt med SSH till en av dina servrar:
+>   ```bash
+>   ssh -i ~/.ssh/eg223ps-keypair.pem ubuntu@<SERVER_PUBLIC_IP>
+>   ```
+> - Om du får en fråga om fingerprint, skriv `yes` för att lägga till servern i din `known_hosts`.
+> - Om du kan ansluta med SSH men ansible fortfarande misslyckas, kontrollera att port 22 är öppen i din OpenStack security group och att rätt IP-adress används.
+> - Om du får "Connection refused" eller "Connection closed by UNKNOWN port", kan servern vara nystartad eller ha felaktiga nätverksinställningar – vänta någon minut och testa igen.
 
 ---
 
@@ -190,6 +200,7 @@ kubectl get pods
 Om du får `No resources found in default namespace` betyder det att inga pods körs i default-namespace just nu.
 
 **Möjliga orsaker:**
+
 - Dina deployments har inte skapats eller har tagits bort.
 - Du har deployat till ett annat namespace än `default`.
 - Något gick fel vid deploy (`kubectl apply -f k8s/`).
@@ -238,6 +249,7 @@ _Byt ut `<SERVER_PUBLIC_IP>` och `<NodePort>` mot dina egna värden från `kubec
 
 **Om du har uppdaterat en fil i k8s:**
 För att uppdatera deploymenten i klustret:
+
 ```bash
 kubectl apply -f k8s/
 ```
@@ -245,10 +257,10 @@ kubectl apply -f k8s/
 ---
 
 > **Tips:**  
-> Hur du stänger ner allt (rensa miljön): 
-> 
+> Hur du stänger ner allt (rensa miljön):
+>
 > ```bash
 > kubectl delete -f k8s/
-> cd terraform  
-> terraform destroy 
+> cd terraform
+> terraform destroy
 > ```

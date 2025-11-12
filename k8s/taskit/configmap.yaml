@@ -4,7 +4,7 @@ metadata:
   name: taskit-config
 data:
   BASE_URL: "/"
-  DB_CONNECTION_STRING: "mongodb://mongodb:27019/just-task-it-prod"
+  DB_CONNECTION_STRING: "mongodb://mongodb:27017/just-task-it"
   REDIS_URL: "redis://redis:6379"
   RABBITMQ_URL: "amqp://admin:password@rabbitmq:5672"
   PORT: "3000"

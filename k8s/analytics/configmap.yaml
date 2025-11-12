@@ -4,5 +4,5 @@ metadata:
   name: analytics-config
 data:
   PORT: "4000"
-  ANALYTICS_DB_URL: "mongodb://mongodb:27019/just-task-it-analytics"
+  ANALYTICS_DB_URL: "mongodb://mongodb:27017"
   RABBITMQ_URL: "amqp://admin:password@rabbitmq:5672"
