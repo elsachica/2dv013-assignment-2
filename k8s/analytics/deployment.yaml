@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: analytics
-          image: registry.gitlab.lnu.se/eg223ps/assignment-2-2dv013/taskit-analytics:1.0.0
+          image: pannkakor/taskit-analytics:1.0.0
           ports:
             - containerPort: 4000
           envFrom:
