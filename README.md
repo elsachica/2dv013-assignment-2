@@ -1,37 +1,43 @@
-# assignment-2-2dv013
+# Just Task It – Cloud Native Applications (2DV013)
 
-Just Task It – Cloud Native Applications (2DV013)  
-Fullstack-projekt med Express, MongoDB, Redis, RabbitMQ, Docker, Kubernetes, Terraform och Ansible.
+**Fullstack-projekt med Express, MongoDB, Redis, RabbitMQ, Docker, Kubernetes, Terraform och Ansible.**
 
---------__-----___--__--
+---
 
-I detta projekt har jag byggt en cloud native applikation med microservices-arkitektur. Applikationen består av två huvudtjänster: `taskit-service` (backend för task management) och `analytics-service` (för statistik och analys). Varje tjänst är isolerad och körs i egna containrar, vilket möjliggör skalbarhet och oberoende deployment.
+## Projektöversikt
 
-Jag har använt flera moderna verktyg och mönster:
-- **Microservices:** Varje tjänst har sin egen kodbas, Dockerfile och Kubernetes-manifest. Kommunikation mellan tjänster sker via RabbitMQ (event-driven architecture).
-- **Containerisering:** All kod körs i Docker-containrar, vilket gör det enkelt att köra och deploya i olika miljöer.
-- **Infrastructure as Code:** Infrastruktur provisioneras automatiskt med Terraform och konfigureras med Ansible. Detta gör det enkelt att reproducera och ändra miljön.
-- **CI/CD:** Deployment och tester automatiseras med GitLab CI/CD, där pipeline-filen [`.gitlab-ci.yml`](.gitlab-ci.yml) bygger, testar och deployar tjänsterna till Kubernetes.
-- **Kubernetes:** Applikationen körs i ett k3s-kluster, där varje tjänst har en egen deployment och service (NodePort) för extern åtkomst.
-- **Persistens och state:** MongoDB används för lagring av tasks, Redis för sessions, och RabbitMQ för meddelandehantering mellan tjänster.
-- **Designmönster:** Backend använder MVC (Model-View-Controller) med Express och EJS för vyer. PRG (Post/Redirect/Get) används för att undvika dubbla formulärsubmissions.
+Detta projekt är en cloud native applikation med microservices-arkitektur. Två huvudtjänster ingår:
 
-Utvecklingen har varit modulär och testbar tack vare tydlig separation mellan tjänster och användning av best practices för cloud native applikationer.
-____---_____--___--__-______------
+- **taskit-service** – backend för task management
+- **analytics-service** – statistik och analys
+
+Varje tjänst körs i egna containrar och har separata Kubernetes-manifests, vilket ger skalbarhet och enkel deployment.
+
+**Tekniska highlights:**
+
+- Microservices med event-driven kommunikation via RabbitMQ
+- Containerisering med Docker
+- Infrastruktur som kod med Terraform & Ansible
+- CI/CD med GitLab pipelines
+- Kubernetes (k3s) för orkestrering
+- MongoDB för tasks, Redis för sessions, RabbitMQ för meddelanden
+- MVC-mönster och PRG (Post/Redirect/Get) i backend
+
+Projektet är modulärt, testbart och följer best practices för cloud native applikationer.
 
 ---
 
 ## Om projektet
 
-Detta repo innehåller en komplett miljö för att köra och analysera en task management-app med microservices.  
-Projektet är byggt för kursen 2DV013 och visar hur man automatiserar infrastruktur, deployment och CI/CD med moderna verktyg.
+Detta repo innehåller en komplett miljö för att köra och analysera en task management-app med microservices. Byggt för kursen 2DV013 – fokus på automatisering av infrastruktur, deployment och CI/CD.
 
-**Tekniker:**  
-- Node.js/Express  
-- MongoDB, Redis, RabbitMQ  
-- Docker & Docker Compose  
-- Kubernetes (k3s)  
-- Terraform & Ansible  
+**Stacken:**
+
+- Node.js/Express
+- MongoDB, Redis, RabbitMQ
+- Docker & Docker Compose
+- Kubernetes (k3s)
+- Terraform & Ansible
 - GitLab CI/CD
 
 ---
@@ -41,6 +47,7 @@ Projektet är byggt för kursen 2DV013 och visar hur man automatiserar infrastru
 Se [start_programs.md](start_programs.md) för en detaljerad steg-för-steg-guide.
 
 **Snabbstart:**
+
 1. Klona repot och installera beroenden
 2. Provisionera infrastruktur med Terraform
 3. Installera k3s-kluster med Ansible
@@ -52,29 +59,55 @@ Se [start_programs.md](start_programs.md) för en detaljerad steg-för-steg-guid
 ## Hitta din site
 
 Efter deployment, kör:
+
 ```bash
 kubectl get svc
 ```
-Besök:  
+
+Besök i webbläsaren:
+
 ```
 http://<SERVER_PUBLIC_IP>:<NodePort>
 ```
+
 Byt ut `<NodePort>` mot porten för t.ex. `taskit` eller `analytics`.
+
+---
+
+### Direkta länkar till tjänster (exempel)
+
+- **Analytics dashboard:**  
+  http://194.47.171.189:31764
+- **Just Task It:**  
+  http://194.47.171.189:30908
 
 ---
 
 ## Felsökning
 
-- Se status på pods och tjänster:
+- **Se status på pods och tjänster:**
   ```bash
   kubectl get pods -A
   kubectl get svc -A
   ```
-- Se loggar:
+- **Se loggar:**
   ```bash
   kubectl logs <pod-namn>
   ```
-- Rensa miljön:
+- **Testa anslutning till servrar med Ansible:**
+  ```bash
+  cd ansible
+  ansible all -i inventory.ini -m ping
+  cd ..
+  ```
+  Om det inte fungerar:
+  - Testa SSH manuellt:
+    ```bash
+    ssh -i ~/.ssh/eg223ps-keypair.pem ubuntu@<SERVER_PUBLIC_IP>
+    ```
+  - Svara `yes` på fingerprint-frågan om den dyker upp.
+  - Kontrollera att port 22 är öppen i din security group.
+- **Rensa miljön:**
   ```bash
   kubectl delete -f k8s/
   cd terraform
@@ -85,8 +118,7 @@ Byt ut `<NodePort>` mot porten för t.ex. `taskit` eller `analytics`.
 
 ## Test och CI/CD
 
-Automatiska tester och deployment körs via GitLab CI/CD.  
-Se [.gitlab-ci.yml](.gitlab-ci.yml) för pipeline-definition.
+Automatiska tester och deployment körs via GitLab CI/CD. Se [.gitlab-ci.yml](.gitlab-ci.yml) för pipeline-definition.
 
 ---
 
@@ -102,10 +134,8 @@ Se [.gitlab-ci.yml](.gitlab-ci.yml) för pipeline-definition.
 
 ---
 
-
 ---
 
 ## Licens
 
-Detta projekt är licensierat under MIT-licensen.  
-Se [LICENSE](./LICENSE) för mer information.
+Detta projekt är licensierat under MIT-licensen. Se [LICENSE](./LICENSE) för mer information.
