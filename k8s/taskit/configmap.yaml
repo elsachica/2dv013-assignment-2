@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: taskit-config
+data:
+  BASE_URL: "/"
+  DB_CONNECTION_STRING: "mongodb://mongodb:27019/just-task-it-prod"
+  REDIS_URL: "redis://redis:6379"
+  RABBITMQ_URL: "amqp://admin:password@rabbitmq:5672"
+  PORT: "3000"
+  SESSION_NAME: "just-task-it-feat-logging.user-session"
+  LOG_LEVEL: "info"
+  LOGGER_MORGAN_FORMAT_ADD_REMOTE: "true"
+  LOGGER_COMBINED_LOG_FILE: "/var/log/just-task-it/combined.log"
+  LOGGER_ERROR_LOG_FILE: "/var/log/just-task-it/error.log"
+  LOGGER_UNCAUGHT_EXCEPTION_LOG_FILE: "/var/log/just-task-it/uncaught-exception.log"

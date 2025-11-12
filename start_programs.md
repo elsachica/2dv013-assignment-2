@@ -139,6 +139,9 @@ docker push <ditt-användarnamn>/taskit-analytics:1.0.0
 
 ```bash
 kubectl apply -f k8s/
+
+# eller om man har undermappar:
+kubectl apply -f k8s/ --recursive
 ```
 
 **Ta bort gamla pods om du ändrat images:**
