@@ -1,7 +1,7 @@
 /**
  * @file Defines the TaskController class.
  * @module controllers/TaskController
- * @author Mats Loock
+ * @author Elsa Gas Wikström
  * @version 3.1.0
  */
 
@@ -25,22 +25,18 @@ export class TaskController {
     try {
       logger.silly('Loading task document', { id })
 
-      // Get the task document.
       const taskDoc = await TaskModel.findById(id)
 
-      // If the task document is not found, throw an error.
       if (!taskDoc) {
         const error = new Error('The task you requested does not exist.')
         error.status = 404
         throw error
       }
 
-      // Provide the task document to req.
       req.doc = taskDoc
 
       logger.silly('Loaded task document', { id })
 
-      // Next middleware.
       next()
     } catch (error) {
       next(error)

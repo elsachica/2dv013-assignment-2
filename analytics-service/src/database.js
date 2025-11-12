@@ -20,15 +20,15 @@ export async function connectDatabase () {
 /**
  * Saves a metric event to the database.
  *
- * @param {object} metricData - The event object to save.  ← ÄNDRA PARAMETER-NAMN!
+ * @param {object} metricData - The event object to save.
  */
-export async function saveMetric (metricData) {  // ← ÄNDRA HÄR!
+export async function saveMetric (metricData) {
   try {
     await db.collection('metrics').insertOne({
-      ...metricData,  // ← ÄNDRA HÄR!
+      ...metricData,
       processed_at: new Date()
     })
-    console.log(`📊 Saved metric: ${metricData.event_type || metricData.routingKey}`)  // ← ÄNDRA HÄR!
+    console.log(`✅ Saved metric: ${metricData.event_type || metricData.routingKey}`)
   } catch (error) {
     console.error('❌ Error saving metric:', error)
   }
@@ -42,7 +42,7 @@ export async function saveMetric (metricData) {  // ← ÄNDRA HÄR!
 export async function getTasksCompletedOverTime () {
   return await db.collection('metrics')
     .aggregate([
-      { $match: { event_type: 'task.updated', done: true, timestamp: { $type: "date" } } }, // säkerställ att timestamp är date
+      { $match: { event_type: 'task.updated', done: true, timestamp: { $type: "date" } } },
       {
         $group: {
           _id: { $dateToString: { format: '%Y-%m-%d', date: '$timestamp' } },
