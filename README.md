@@ -6,7 +6,8 @@
 
 ## Projektöversikt
 
-Detta projekt är en cloud native applikation med microservices-arkitektur. Två huvudtjänster ingår:
+Detta projekt är en cloud native applikation med microservices-arkitektur.  
+Två huvudtjänster ingår:
 
 - **taskit-service** – backend för task management
 - **analytics-service** – statistik och analys
@@ -22,23 +23,6 @@ Varje tjänst körs i egna containrar och har separata Kubernetes-manifests, vil
 - Kubernetes (k3s) för orkestrering
 - MongoDB för tasks, Redis för sessions, RabbitMQ för meddelanden
 - MVC-mönster och PRG (Post/Redirect/Get) i backend
-
-Projektet är modulärt, testbart och följer best practices för cloud native applikationer.
-
----
-
-## Om projektet
-
-Detta repo innehåller en komplett miljö för att köra och analysera en task management-app med microservices. Byggt för kursen 2DV013 – fokus på automatisering av infrastruktur, deployment och CI/CD.
-
-**Stacken:**
-
-- Node.js/Express
-- MongoDB, Redis, RabbitMQ
-- Docker & Docker Compose
-- Kubernetes (k3s)
-- Terraform & Ansible
-- GitLab CI/CD
 
 ---
 
@@ -94,22 +78,9 @@ Byt ut `<NodePort>` mot porten för t.ex. `taskit` eller `analytics`.
   ```bash
   kubectl logs <pod-namn>
   ```
-- **Testa anslutning till servrar med Ansible:**
-  ```bash
-  cd ansible
-  ansible all -i inventory.ini -m ping
-  cd ..
-  ```
-  Om det inte fungerar:
-  - Testa SSH manuellt:
-    ```bash
-    ssh -i ~/.ssh/eg223ps-keypair.pem ubuntu@<SERVER_PUBLIC_IP>
-    ```
-  - Svara `yes` på fingerprint-frågan om den dyker upp.
-  - Kontrollera att port 22 är öppen i din security group.
 - **Rensa miljön:**
   ```bash
-  kubectl delete -f k8s/
+  kubectl apply -f k8s/ --recursive
   cd terraform
   terraform destroy
   ```
@@ -118,7 +89,8 @@ Byt ut `<NodePort>` mot porten för t.ex. `taskit` eller `analytics`.
 
 ## Test och CI/CD
 
-Automatiska tester och deployment körs via GitLab CI/CD. Se [.gitlab-ci.yml](.gitlab-ci.yml) för pipeline-definition.
+Automatiska tester och deployment körs via GitLab CI/CD.  
+Se [.gitlab-ci.yml](.gitlab-ci.yml) för pipeline-definition.
 
 ---
 
@@ -131,8 +103,6 @@ Automatiska tester och deployment körs via GitLab CI/CD. Se [.gitlab-ci.yml](.g
 - `ansible/` – Automatiserad serverkonfiguration
 - `.gitlab-ci.yml` – CI/CD-pipeline
 - `start_programs.md` – Start- och felsökningsguide
-
----
 
 ---
 
