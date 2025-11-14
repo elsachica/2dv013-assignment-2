@@ -10,9 +10,9 @@ export async function connectDatabase () {
   try {
     await client.connect()
     db = client.db('jti-analytics')
-    console.log('✅ Analytics DB connected')
+    console.log('Analytics DB connected')
   } catch (error) {
-    console.error('❌ Analytics DB connection error:', error)
+    console.error('Analytics DB connection error:', error)
     process.exit(1)
   }
 }
@@ -28,9 +28,9 @@ export async function saveMetric (metricData) {
       ...metricData,
       processed_at: new Date()
     })
-    console.log(`✅ Saved metric: ${metricData.event_type || metricData.routingKey}`)
+    console.log(`Saved metric: ${metricData.event_type || metricData.routingKey}`)
   } catch (error) {
-    console.error('❌ Error saving metric:', error)
+    console.error('Error saving metric:', error)
   }
 }
 
