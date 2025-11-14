@@ -1,12 +1,11 @@
 /**
  * @file Defines the base schema.
  * @module models/baseSchema
- * @author Mats Loock
+ * @author Elsa Gas Wikström
  * @version 3.1.0
  */
 
 import mongoose from 'mongoose'
-import { logger } from '../config/winston.js'
 
 // Options to use converting the document to a plain object and JSON.
 const convertOptions = {
@@ -29,18 +28,21 @@ const convertOptions = {
 }
 
 // Create a schema.
-const baseSchema = new mongoose.Schema({}, {
-  // Add and maintain createdAt and updatedAt fields.
-  timestamps: true,
-  // Set the options to use when converting the document to a POJO (or DTO) or JSON.
-  // POJO = Plain Old JavaScript Object
-  // DTO = Data Transfer Object
-  toObject: convertOptions,
-  toJSON: convertOptions,
-  // Enable optimistic concurrency control. This is a strategy to ensure the
-  // document you're updating didn't change between when you loaded it, and
-  // when you update it.
-  optimisticConcurrency: false
-})
+const baseSchema = new mongoose.Schema(
+  {},
+  {
+    // Add and maintain createdAt and updatedAt fields.
+    timestamps: true,
+    // Set the options to use when converting the document to a POJO (or DTO) or JSON.
+    // POJO = Plain Old JavaScript Object
+    // DTO = Data Transfer Object
+    toObject: convertOptions,
+    toJSON: convertOptions,
+    // Enable optimistic concurrency control. This is a strategy to ensure the
+    // document you're updating didn't change between when you loaded it, and
+    // when you update it.
+    optimisticConcurrency: false
+  }
+)
 
 export const BASE_SCHEMA = Object.freeze(baseSchema)

@@ -1,7 +1,7 @@
 /**
  * @file Defines the home router.
  * @module routes/homeRouter
- * @author Mats Loock
+ * @author Elsa Gas Wikström
  * @version 3.0.0
  */
 

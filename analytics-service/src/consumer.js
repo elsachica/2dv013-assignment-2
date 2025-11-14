@@ -2,7 +2,18 @@ import amqp from 'amqplib'
 import { saveMetric } from './database.js'
 
 /**
- * Starts the RabbitMQ consumer to listen for task events.
+ * Starts the RabbitMQ consumer for the analytics service.
+ * Connects to RabbitMQ, sets up the exchange and queue, and listens for events.
+ * Processes incoming messages, saves metrics, and handles errors and reconnections.
+ *
+ * @async
+ * @function startConsumer
+ * @returns {Promise<void>} Resolves when the consumer is started.
+ *
+ * @throws Will log errors if connection or message processing fails.
+ *
+ * @example
+ * startConsumer();
  */
 export async function startConsumer () {
   try {
@@ -16,7 +27,7 @@ export async function startConsumer () {
     await channel.assertQueue(queue, { durable: true })
     await channel.bindQueue(queue, exchange, 'task.*')
 
-    console.log('🐰 Analytics Consumer started, waiting for events...')
+    console.log('Analytics Consumer started, waiting for events...')
 
     channel.consume(queue, async (msg) => {
       if (msg !== null) {
@@ -24,7 +35,7 @@ export async function startConsumer () {
           const eventData = JSON.parse(msg.content.toString())
           const routingKey = msg.fields.routingKey
           
-          console.log('📥 Received event:', eventData)
+          console.log('Received event:', eventData)
 
             await saveMetric({
             event_type: routingKey,
@@ -34,7 +45,7 @@ export async function startConsumer () {
 
           channel.ack(msg)
         } catch (error) {
-          console.error('❌ Error processing message:', error)
+          console.error('Error processing message:', error)
           channel.nack(msg, false, false)
         }
       }

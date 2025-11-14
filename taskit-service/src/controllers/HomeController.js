@@ -1,7 +1,7 @@
 /**
  * @file Defines the HomeController class.
  * @module controllers/HomeController
- * @author Mats Loock
+ * @author Elsa Gas Wikström
  * @version 3.0.0
  */
 

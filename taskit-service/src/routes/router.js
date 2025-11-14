@@ -1,7 +1,7 @@
 /**
  * @file Defines the main router.
  * @module routes/router
- * @author Mats Loock
+ * @author Elsa Gas Wikström
  * @version 3.0.0
  */
 

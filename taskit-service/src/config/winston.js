@@ -1,7 +1,7 @@
 /**
  * @file Defines the Winston logger.
  * @module config/winston
- * @author Mats Loock
+ * @author Elsa Gas Wikström
  * @version 1.0.0
  */
 
@@ -106,7 +106,9 @@ const metadataFormatter = format((info) => {
   if (info.metadata) {
     // Deep copies the metadata object and returns a new object with
     // enumerable and non-enumrele properties (cyclical structures are handled).
-    info.metadata = JSON.decycle(info.metadata, { includeNonEnumerableProperties: true })
+    info.metadata = JSON.decycle(info.metadata, {
+      includeNonEnumerableProperties: true
+    })
   }
 
   // Only add a defaultMetadata property if there is any non-empty data.
@@ -169,7 +171,12 @@ export const logger = createLogger({
             }
           }
 
-          return colorizer.colorize(colorLevel, `[${timestamp}] ${level.toLocaleUpperCase()}: ${message} ${metadata?.error?.stack ? `\n  ${metadata.error.stack}` : ''}`)
+          return colorizer.colorize(
+            colorLevel,
+            `[${timestamp}] ${level.toLocaleUpperCase()}: ${message} ${
+              metadata?.error?.stack ? `\n  ${metadata.error.stack}` : ''
+            }`
+          )
         })
       )
     })
@@ -182,11 +189,7 @@ if (process.env.LOGGER_COMBINED_LOG_FILE) {
     new transports.File({
       filename: process.env.LOGGER_COMBINED_LOG_FILE,
       decolorize: true,
-      format: combine(
-        baseFormat,
-        decolorize(),
-        json()
-      )
+      format: combine(baseFormat, decolorize(), json())
     })
   )
 }
@@ -198,11 +201,7 @@ if (process.env.LOGGER_ERROR_LOG_FILE) {
       filename: process.env.LOGGER_ERROR_LOG_FILE,
       level: 'error',
       decolorize: true,
-      format: combine(
-        baseFormat,
-        decolorize(),
-        json()
-      )
+      format: combine(baseFormat, decolorize(), json())
     })
   )
 }
@@ -216,23 +215,23 @@ if (process.env.LOGGER_UNCAUGHT_EXCEPTION_LOG_FILE) {
   )
 }
 
-// // Add MongoDB transport if a connection string is provided.
-// if (process.env.LOGGER_DB_CONNECTION_STRING) {
-//   await import('winston-mongodb')
+// Add MongoDB transport if a connection string is provided.
+if (process.env.LOGGER_DB_CONNECTION_STRING) {
+  await import('winston-mongodb')
 
-//   logger.add(new transports.MongoDB({
-//     level: 'warn',
-//     db: process.env.LOGGER_DB_CONNECTION_STRING,
-//     options: {
-//       poolSize: 2,
-//       useNewUrlParser: true,
-//       useUnifiedTopology: true
-//     },
-//     collection: process.env.LOGGER_DB_COLLECTION_NAME || 'logs',
-//     capped: true,
-//     decolorize: true,
-//     format: combine(
-//       baseFormat
-//     )
-//   }))
-// }
+  logger.add(new transports.MongoDB({
+    level: 'warn',
+    db: process.env.LOGGER_DB_CONNECTION_STRING,
+    options: {
+      poolSize: 2,
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    },
+    collection: process.env.LOGGER_DB_COLLECTION_NAME || 'logs',
+    capped: true,
+    decolorize: true,
+    format: combine(
+      baseFormat
+    )
+  }))
+}

@@ -1,7 +1,7 @@
 /**
  * @file Defines the Task model.
  * @module models/TaskModel
- * @author Mats Loock
+ * @author Elsa Gas Wikström
  * @version 3.0.0
  */
 

@@ -4,7 +4,7 @@ import redisClient from './redis.js'
 /**
  * @file This module contains the options object for the session middleware.
  * @module config/mongoose
- * @author Mats Loock
+ * @author Elsa Gas Wikström
  * @version 1.0.0
  * @see {@link https://github.com/expressjs/session}
  */

@@ -36,13 +36,23 @@ app.get('/health', (req, res) => {
 /**
  * Start the server.
  */
+/**
+ * Initializes the analytics service by connecting to the database,
+ * starting the message consumer, and launching the server.
+ * Logs a message when the server is running.
+ * If any step fails, logs the error and exits the process.
+ *
+ * @async
+ * @function start
+ * @returns {Promise<void>} Resolves when the service has started successfully.
+ */
 async function start () {
   try {
     await connectDatabase()
     await startConsumer()
     
     app.listen(PORT, () => {
-      console.log(`📊 Analytics Dashboard running at http://localhost:${PORT}`)
+      console.log(`Analytics Dashboard running at http://localhost:${PORT}`)
     })
   } catch (error) {
     console.error('Failed to start Analytics Service:', error)

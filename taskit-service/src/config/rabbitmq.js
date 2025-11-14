@@ -7,6 +7,15 @@ let channel = null
 /**
  * Connects to RabbitMQ and creates a channel.
  */
+/**
+ * Establishes a connection to RabbitMQ, creates a channel, and asserts the 'tasks' exchange.
+ * Handles connection errors and automatically retries on failure.
+ * Logs connection status and errors using the provided logger.
+ *
+ * @async
+ * @function connect
+ * @returns {Promise<void>} Resolves when the connection and channel are established.
+ */
 async function connect () {
   try {
     connection = await amqp.connect(process.env.RABBITMQ_URL || 'amqp://admin:password@rabbitmq:5672')

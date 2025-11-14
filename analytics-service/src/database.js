@@ -59,6 +59,16 @@ export async function getTasksCompletedOverTime () {
  *
  * @returns {Promise<object>} Object with created, completed, deleted counts.
  */
+/**
+ * Retrieves the count of task-related events from the 'metrics' collection.
+ *
+ * Aggregates the number of occurrences for each event type ('task.created', 'task.updated', 'task.deleted')
+ * and returns an object containing the counts for each event type.
+ *
+ * @async
+ * @function getTaskCounts
+ * @returns {Promise<{created: number, updated: number, deleted: number}>} An object with the counts of created, updated, and deleted tasks.
+ */
 export async function getTaskCounts () {
   const metrics = await db.collection('metrics')
     .aggregate([
