@@ -16,4 +16,4 @@ jq -r --arg server_ip "$SERVER_IP" '
   "\n\n[all:vars]\nansible_ssh_common_args='\''-o StrictHostKeyChecking=no'\''"
 ' > "$SCRIPT_DIR/ansible/inventory.ini"
 
-echo "✅ Generated ansible/inventory.ini successfully!"
+echo "Generated ansible/inventory.ini successfully!"
