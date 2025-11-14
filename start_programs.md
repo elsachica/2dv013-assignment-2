@@ -137,7 +137,7 @@ Följ dessa steg för att sätta upp din infrastruktur och Kubernetes-kluster:
 
 ---
 
-## Del 2 – Docker
+## Del 2 – Docker (OPTIONAL)
 
 1. Logga in på GitLab Container Registry
 2. Bygg Docker-images
@@ -147,23 +147,26 @@ Följ dessa steg för att sätta upp din infrastruktur och Kubernetes-kluster:
 
 GitLab Container Registry används för att bygga, lagra och hantera dina Docker-images. Alla images pushas hit och används sedan vid deployment till Kubernetes.
 
+> **Obs!** Du behöver bara logga in och pusha images manuellt om du vill testa från din egen dator. Om du använder GitLab-pipelinen sker detta automatiskt – pipelinen bygger och pushar images till registryt utan att du behöver göra något manuellt.
+
 ### GitLab Container Registry
 
 ```bash
+# Om du vill testa att pusha images manuellt:
 # Logga in på GitLab Container Registry
 # OBS! Använd en access token istället för ditt vanliga lösenord, särskilt om du har tvåfaktorsautentisering (2FA).
 # Skapa en token under GitLab → Inställningar → Access Tokens med "read_registry" och "write_registry".
 # Använd sedan:
 echo <personal-access-token> | docker login gitlab.lnu.se:5050 -u <gitlab-username> --password-stdin
 
-# Eller bygg och pusha manuellt
+# Bygg och pusha images manuellt
 docker build -t registry.gitlab.lnu.se/<namespace>/<repo>/taskit-backend:1.0.0 ./taskit-service
 docker build -t registry.gitlab.lnu.se/<namespace>/<repo>/taskit-analytics:1.0.0 ./analytics-service
 docker push registry.gitlab.lnu.se/<namespace>/<repo>/taskit-backend:1.0.0
 docker push registry.gitlab.lnu.se/<namespace>/<repo>/taskit-analytics:1.0.0
 ```
 
-> Kontrollera på [GitLab Container Registry](https://gitlab.lnu.se/<namespace>/<repo>/-/container_registry) att dina images finns uppladdade innan du går vidare. -->
+> Kontrollera på [GitLab Container Registry](https://gitlab.lnu.se/<namespace>/<repo>/-/container_registry) att dina images finns uppladdade innan du går vidare.
 
 ---
 
@@ -181,7 +184,7 @@ Följ dessa steg för att deploya och verifiera dina appar i Kubernetes-klustret
    - Första gången du deployar _(eller om du har ändrat i yaml filerna)_:
      ```bash
      kubectl apply -f k8s/
-     # eller om du har undermappar:
+     # eller om du har undermappar i k8s mappen:
      kubectl apply -f k8s/ --recursive
      ```
      Detta skapar alla pods, services och deployments i klustret.
