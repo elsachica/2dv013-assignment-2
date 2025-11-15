@@ -65,6 +65,7 @@ Byt ut `<NodePort>` mot porten för t.ex. `taskit` eller `analytics`.
 - **Just Task It:**  
   http://194.47.171.189:30908
 
+  > Obs! Du måste vara ansluten till LNUs VPN för att kunna nå webbplatserna som körs på Cumulus/Openstack.
 ---
 
 ## Felsökning
