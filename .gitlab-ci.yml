@@ -54,13 +54,8 @@ deploy_k8s:
 
     # Skapa ImagePullSecret för GitLab Container Registry
     - echo "Creating ImagePullSecret for GitLab Container Registry..."
-    - kubectl create secret docker-registry gitlab-registry-secret \
-        --docker-server=registry.gitlab.lnu.se \
-        --docker-username=$CI_REGISTRY_USER \
-        --docker-password=$CI_JOB_TOKEN \
-        --docker-email=$GITLAB_USER_EMAIL \
-        --dry-run=client -o yaml | kubectl apply -f -
-    
+    - kubectl create secret docker-registry gitlab-registry-secret --docker-server=registry.gitlab.lnu.se --docker-username=$CI_REGISTRY_USER --docker-password=$CI_JOB_TOKEN --docker-email=$GITLAB_USER_EMAIL --dry-run=client -o yaml | kubectl apply -f -
+
     # Deploya appar till k3s
     - kubectl apply -f k8s/ --recursive
     - echo "Waiting for deployments to rollout..."
