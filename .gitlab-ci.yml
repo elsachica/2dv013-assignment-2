@@ -59,13 +59,25 @@ deploy_k8s:
     # Deploya appar till k3s
     - kubectl apply -f k8s/ --recursive
 
-        # DEBUG
+    # DEBUG - Visa pod status
     - echo "=== POD STATUS ==="
-    - kubectl get pods
-    - echo "=== POD EVENTS ==="
-    - kubectl describe pod -l app=taskit --sort-by='.metadata.creationTimestamp' | tail -50
-    - echo "=== POD LOGS ==="
-    - kubectl logs -l app=taskit --tail=20 || echo "No logs yet"
+    - kubectl get pods -o wide
+
+    # DEBUG - Visa events sorterат efter tid
+    - echo "=== POD EVENTS (senaste) ==="
+    - kubectl get events --sort-by='.lastTimestamp' | tail -20
+
+    # DEBUG - Visa logs från taskit pods
+    - echo "=== TASKIT POD LOGS ==="
+    - kubectl logs -l app=taskit --tail=30 --all-containers=true || echo "No logs yet"
+
+    # DEBUG - Visa logs från analytics pods
+    - echo "=== ANALYTICS POD LOGS ==="
+    - kubectl logs -l app=analytics --tail=30 --all-containers=true || echo "No logs yet"
+
+    # DEBUG - Describe en specifik pod om den finns
+    - echo "=== DESCRIBE LATEST TASKIT POD ==="
+    - kubectl describe pod -l app=taskit -o name | head -1 | xargs kubectl describe || echo "No pods to describe"
 
     - echo "Waiting for deployments to rollout..."
     - kubectl rollout status deployment/taskit --timeout=10m || true
