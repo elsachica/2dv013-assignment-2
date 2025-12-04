@@ -58,9 +58,18 @@ deploy_k8s:
 
     # Deploya appar till k3s
     - kubectl apply -f k8s/ --recursive
+
+        # DEBUG
+    - echo "=== POD STATUS ==="
+    - kubectl get pods
+    - echo "=== POD EVENTS ==="
+    - kubectl describe pod -l app=taskit --sort-by='.metadata.creationTimestamp' | tail -50
+    - echo "=== POD LOGS ==="
+    - kubectl logs -l app=taskit --tail=20 || echo "No logs yet"
+
     - echo "Waiting for deployments to rollout..."
-    - kubectl rollout status deployment/taskit || true
-    - kubectl rollout status deployment/analytics || true
+    - kubectl rollout status deployment/taskit --timeout=10m || true
+    - kubectl rollout status deployment/analytics --timeout=10m || true
     - echo "✓ Deployment complete!"
 
   only:

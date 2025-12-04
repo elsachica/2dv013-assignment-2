@@ -22,3 +22,10 @@ spec:
           envFrom:
             - configMapRef:
                 name: analytics-config
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+            requests:
+              memory: "128Mi"
+              cpu: "125m"
