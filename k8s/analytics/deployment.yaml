@@ -12,6 +12,8 @@ spec:
       labels:
         app: analytics
     spec:
+      imagePullSecrets:
+        - name: gitlab-registry-secret
       containers:
         - name: analytics
           image: registry.gitlab.lnu.se/eg223ps/assignment-2-2dv013/taskit-analytics:main

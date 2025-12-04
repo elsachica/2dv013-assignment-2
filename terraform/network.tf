@@ -82,7 +82,8 @@ resource "openstack_networking_secgroup_rule_v2" "https" {
   security_group_id = openstack_networking_secgroup_v2.secgroup.id
 }
 
-# NodePort services range (includes monitoring ports)
+# NodePort services range (30000-32767)
+# Allows Kubernetes NodePort services to be accessed from outside the cluster
 resource "openstack_networking_secgroup_rule_v2" "nodeport" {
   direction         = "ingress"
   ethertype         = "IPv4"

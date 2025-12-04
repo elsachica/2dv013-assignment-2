@@ -12,6 +12,8 @@ spec:
       labels:
         app: taskit
     spec:
+      imagePullSecrets:
+        - name: gitlab-registry-secret
       containers:
         - name: taskit
           image: registry.gitlab.lnu.se/eg223ps/assignment-2-2dv013/taskit-backend:main
