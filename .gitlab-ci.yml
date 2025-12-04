@@ -11,6 +11,8 @@ build_taskit:
   script:
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(printf '%s' "gitlab-ci-token:${CI_JOB_TOKEN}" | base64)\"}}}" > /kaniko/.docker/config.json
     - /kaniko/executor --context "${CI_PROJECT_DIR}/taskit-service" --dockerfile "${CI_PROJECT_DIR}/taskit-service/Dockerfile" --destination "${CI_REGISTRY_IMAGE}/taskit-backend:${CI_COMMIT_REF_SLUG}"
+    - echo "✓ Successfully built and pushed taskit-backend:${CI_COMMIT_REF_SLUG}"
+
 
 build_analytics:
   stage: build
@@ -20,6 +22,8 @@ build_analytics:
   script:
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(printf '%s' "gitlab-ci-token:${CI_JOB_TOKEN}" | base64)\"}}}" > /kaniko/.docker/config.json
     - /kaniko/executor --context "${CI_PROJECT_DIR}/analytics-service" --dockerfile "${CI_PROJECT_DIR}/analytics-service/Dockerfile" --destination "${CI_REGISTRY_IMAGE}/taskit-analytics:${CI_COMMIT_REF_SLUG}"
+    - echo "✓ Successfully built and pushed taskit-analytics:${CI_COMMIT_REF_SLUG}"
+
 
 test_taskit:
   stage: test
@@ -48,8 +52,11 @@ deploy_k8s:
     - echo "$KUBECONFIG_DATA" | base64 -d > kubeconfig.yaml
     - export KUBECONFIG=$PWD/kubeconfig.yaml
     - kubectl apply -f k8s/ --recursive
+    - echo "Waiting for deployments to rollout..."
     - kubectl rollout status deployment/taskit || true
     - kubectl rollout status deployment/analytics || true
+    - echo "✓ Deployment complete!"
+
   only:
     - main
     - master
