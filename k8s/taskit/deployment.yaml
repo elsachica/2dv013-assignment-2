@@ -17,6 +17,7 @@ spec:
       containers:
         - name: taskit
           image: registry.gitlab.lnu.se/eg223ps/assignment-2-2dv013/taskit-backend:main
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
           envFrom:

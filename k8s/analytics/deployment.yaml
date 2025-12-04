@@ -17,6 +17,7 @@ spec:
       containers:
         - name: analytics
           image: registry.gitlab.lnu.se/eg223ps/assignment-2-2dv013/taskit-analytics:main
+          imagePullPolicy: Always
           ports:
             - containerPort: 4000
           envFrom:
