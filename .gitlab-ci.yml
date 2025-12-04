@@ -10,7 +10,7 @@ build_taskit:
     entrypoint: [""]
   script:
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(printf '%s' "gitlab-ci-token:${CI_JOB_TOKEN}" | base64)\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context "${CI_PROJECT_DIR}/taskit-service" --dockerfile "${CI_PROJECT_DIR}/taskit-service/Dockerfile" --destination "${CI_REGISTRY_IMAGE}/taskit-backend:${CI_COMMIT_REF_SLUG}"
+    - /kaniko/executor --context "${CI_PROJECT_DIR}/taskit-service" --dockerfile "${CI_PROJECT_DIR}/taskit-service/Dockerfile" --destination "gitlab.lnu.se:5050/eg223ps/assignment-2-2dv013/taskit-backend:${CI_COMMIT_REF_SLUG}"
     - echo "✓ Successfully built and pushed taskit-backend:${CI_COMMIT_REF_SLUG}"
 
 
@@ -21,7 +21,7 @@ build_analytics:
     entrypoint: [""]
   script:
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(printf '%s' "gitlab-ci-token:${CI_JOB_TOKEN}" | base64)\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context "${CI_PROJECT_DIR}/analytics-service" --dockerfile "${CI_PROJECT_DIR}/analytics-service/Dockerfile" --destination "${CI_REGISTRY_IMAGE}/taskit-analytics:${CI_COMMIT_REF_SLUG}"
+    - /kaniko/executor --context "${CI_PROJECT_DIR}/analytics-service" --dockerfile "${CI_PROJECT_DIR}/analytics-service/Dockerfile" --destination "gitlab.lnu.se:5050/eg223ps/assignment-2-2dv013/taskit-analytics:${CI_COMMIT_REF_SLUG}"
     - echo "✓ Successfully built and pushed taskit-analytics:${CI_COMMIT_REF_SLUG}"
 
 
@@ -52,9 +52,9 @@ deploy_k8s:
     - echo "$KUBECONFIG_DATA" | base64 -d > kubeconfig.yaml
     - export KUBECONFIG=$PWD/kubeconfig.yaml
 
-    # Skapa ImagePullSecret för GitLab Container Registry
+    # Skapa ImagePullSecret för GitLab Container Registry (med rätt server)
     - echo "Creating ImagePullSecret for GitLab Container Registry..."
-    - kubectl create secret docker-registry gitlab-registry-secret --docker-server=registry.gitlab.lnu.se --docker-username=$CI_REGISTRY_USER --docker-password=$CI_JOB_TOKEN --docker-email=$GITLAB_USER_EMAIL --dry-run=client -o yaml | kubectl apply -f -
+    - kubectl create secret docker-registry gitlab-registry-secret --docker-server=gitlab.lnu.se:5050 --docker-username=$CI_REGISTRY_USER --docker-password=$CI_JOB_TOKEN --docker-email=$GITLAB_USER_EMAIL --dry-run=client -o yaml | kubectl apply -f -
 
     # Deploya appar till k3s
     - kubectl apply -f k8s/ --recursive
