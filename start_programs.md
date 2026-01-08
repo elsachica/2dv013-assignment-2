@@ -172,12 +172,48 @@ docker push registry.gitlab.lnu.se/<namespace>/<repo>/taskit-analytics:1.0.0
 
 ## Del 3 – Kubernetes
 
-1. Deploya appar till k3s med kubectl
-2. Verifiera att allt fungerar (pods, services) + Besök webbsidan
-3. Felsök vid behov
-4. Stäng ner och rensa miljö
+1. Skapa ImagePullSecret för GitLab Container Registry
+2. Deploya appar till k3s med kubectl
+3. Verifiera att allt fungerar (pods, services) + Besök webbsidan
+4. Felsök vid behov
+5. Stäng ner och rensa miljö
 
 Följ dessa steg för att deploya och verifiera dina appar i Kubernetes-klustret:
+
+### 0. **Skapa ImagePullSecret för GitLab Container Registry** ⭐
+
+Innan du deployar måste Kubernetes kunna autentisera sig mot GitLab för att hämta Docker-images.
+
+1. **Skapa en Personal Access Token på GitLab:**
+   - Gå till https://gitlab.lnu.se → **Settings** → **Access Tokens**
+   - Klicka **Add new token**
+   - Fyll i:
+     - **Token name:** `kubernetes-registry`
+     - **Scopes:** ☑ `read_registry` och ☑ `write_registry`
+     - **Expiration date:** 1 år fram i tiden
+   - Klicka **Create personal access token**
+   - **Kopiera tokens** (du kan bara se den här en gång!)
+
+2. **Ladda KUBECONFIG och skapa ImagePullSecret:**
+   ```bash
+   export KUBECONFIG=./k3s.yaml
+   
+   kubectl create secret docker-registry gitlab-registry-secret \
+     --docker-server=gitlab.lnu.se:5050 \
+     --docker-username=eg223ps \
+     --docker-password=<din-token> \
+     --docker-email=eg223ps@student.lnu.se \
+     --dry-run=client -o yaml | kubectl apply -f -
+   ```
+   
+   **Ersätt `<din-token>` med den token du skapade ovan.**
+
+3. **Verifiera att sekreten skapades:**
+   ```bash
+   kubectl get secrets
+   # Du bör se: gitlab-registry-secret
+   ```
+
 
 1. **Deploya appar till k3s**
 
